@@ -36,7 +36,7 @@ int main(){
 
             printf("Digite o nome que deseja adicionar: \n");
             scanf("%s", &adicionar);
-            char *adicionar =(char*)malloc(sizeof(char)*strlen(adicionar)+1);
+            char *adicionar =(char*)realloc(sizeof(char)*strlen(adicionar)+1);
 
             if(ndenomes >= 1){
                 strcat(lista, ",");
