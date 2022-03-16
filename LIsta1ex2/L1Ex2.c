@@ -36,29 +36,21 @@ int main(){
 
             printf("Digite o nome que deseja adicionar: \n");
             scanf("%s", &adicionar);
-            char *adicionar =(char*)realloc(sizeof(char)*strlen(adicionar)+1);
-
+            //char *adicionar =(char*)realloc(adicionar,strlen(adicionar)+1);
             if(ndenomes >= 1){
                 strcat(lista, ",");
                 strcat(lista, adicionar);
                 ++ndenomes;          
             }
             else{
-                printf("lista:%s", &lista);
-                printf("adicionar:%s", &adicionar);
                 strcpy(lista, adicionar);
-                printf("lista:%s", &lista);
                 ++ndenomes;
             }
             break;
 
 
             case 2:
-            //remover um nome
-            printf("Insira o nome que deseja remover a lista \n");
-            scanf("%s \n", &remover);
-            
-            printf("2\n");
+            //remover um nome1
             
             break;
 
@@ -73,6 +65,6 @@ int main(){
 
     //sair do programa
 
-    printf("aaaaaaaa\n");
+    exit(0);
 }
 
