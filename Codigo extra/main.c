@@ -16,13 +16,13 @@ void Ordenar (void *Buffer, agenda *PosicaoPrimeiroContato, agenda *PosicaoUltim
 
 int main()
 {
-    void *buffer = malloc (6*sizeof(int) //variáveis de controle
-                           + 1*sizeof (agenda) //aloca pelo menos o espaço de um contato na agenda
+    void *buffer = malloc (6*sizeof(int) //variï¿½veis de controle
+                           + 1*sizeof (agenda) //aloca pelo menos o espaï¿½o de um contato na agenda
                            + 30*sizeof(char));
     void *bufferTemp;
     void *enderecoExclusao;
     int *menu;
-    int *quantidadeDeContatos; //quantidade de contatos que estão na agenda
+    int *quantidadeDeContatos; //quantidade de contatos que estï¿½o na agenda
     int *quantidadeDeContatosAuxiliar;
     int *i;
     int *j;
@@ -31,14 +31,14 @@ int main()
     agenda *primeiroContato;
     agenda *proximoContato;
 
-    if (buffer == NULL) {   //verifica se a alocação foi feita com sucesso
+    if (buffer == NULL) {   //verifica se a alocaï¿½ï¿½o foi feita com sucesso
         printf ("NAO FOI POSSIVEL ALOCAR MEMORIA!\n");
         exit (1);
     }
 
-    menu = buffer; //primeira posição serve para controle do menu
-    quantidadeDeContatos = buffer+1*sizeof(int); //segunda posição de inteiros do buffer vai guardar quantos contatos temos na agenda
-    *quantidadeDeContatos = 0; //no começo não temos nenhum contato
+    menu = buffer; //primeira posiï¿½ï¿½o serve para controle do menu
+    quantidadeDeContatos = buffer+1*sizeof(int); //segunda posiï¿½ï¿½o de inteiros do buffer vai guardar quantos contatos temos na agenda
+    *quantidadeDeContatos = 0; //no comeï¿½o nï¿½o temos nenhum contato
     quantidadeDeContatosAuxiliar = buffer+2*sizeof(int);
     *quantidadeDeContatosAuxiliar = 0;
     i = buffer+3*sizeof(int);
@@ -53,8 +53,8 @@ int main()
     do {
         *quantidadeDeContatosAuxiliar = *quantidadeDeContatos;
         if (*(quantidadeDeContatos) >= 2) {
-            //chama função para ordenar com Merge Sort
-            bufferTemp = calloc (6*sizeof(int)  //alocando em outro posição, depois tem que transferir pra alocar no buffer
+            //chama funï¿½ï¿½o para ordenar com Merge Sort
+            bufferTemp = calloc (6*sizeof(int)  //alocando em outro posiï¿½ï¿½o, depois tem que transferir pra alocar no buffer
                                  + (*(quantidadeDeContatos)+1)*sizeof (agenda), 1);
             Ordenar(buffer, primeiroContato, proximoContato, i, j, k, bufferTemp, quantidadeDeContatosAuxiliar);
             free (bufferTemp);
@@ -76,7 +76,7 @@ int main()
                 printf ("Nao foi possivel alocar memoria. Realloc\n");
                 exit(1);
             }
-            menu = buffer;     //atualiza os ponteiros com os novos endereços de memória
+            menu = buffer;     //atualiza os ponteiros com os novos endereï¿½os de memï¿½ria
             quantidadeDeContatos = buffer+1*sizeof(int);
             quantidadeDeContatosAuxiliar = buffer+2*sizeof(int);
             i = buffer+3*sizeof(int);
@@ -97,7 +97,7 @@ int main()
             }
             else {
                     /*
-                        implementar aqui a transferência do próximo contato no contato que foi excluído
+                        implementar aqui a transferï¿½ncia do prï¿½ximo contato no contato que foi excluï¿½do
                     */
                 (*(quantidadeDeContatos))--;
 
@@ -109,7 +109,7 @@ int main()
                     printf ("Nao foi possivel alocar memoria. Realloc\n");
                     exit(1);
                 }
-                menu = buffer;     //atualiza os ponteiros com os novos endereços de memória
+                menu = buffer;     //atualiza os ponteiros com os novos endereï¿½os de memï¿½ria
                 quantidadeDeContatos = buffer+1*sizeof(int);
                 quantidadeDeContatosAuxiliar = buffer+2*sizeof(int);
                 i = buffer+3*sizeof(int);
@@ -134,7 +134,7 @@ int main()
             Buscar (primeiroContato, buscaNome, quantidadeDeContatosAuxiliar);
         }
         else if (*(menu) == 5) {
-            free (buffer);  //libera a memória e encerra o programa
+            free (buffer);  //libera a memï¿½ria e encerra o programa
             exit(0);
         }
     } while (1);
@@ -184,14 +184,14 @@ void Buscar (void *PrimeiroContato, char *nome, int *QuantidadeDeContatos) {
 
 void *Excluir (void *PrimeiroContato, char *nomeParaExcluir, int *QuantidadeDeContatos) {
     while (*(QuantidadeDeContatos) > 0) {
-        if (strstr(nomeParaExcluir, PrimeiroContato) != NULL) {    //achou o contato para exclusão
-            PrimeiroContato = (PrimeiroContato + sizeof(agenda)); //sobrepõe o próximo contato no contato excluído
-            return PrimeiroContato;   //excluído com sucesso
+        if (strstr(nomeParaExcluir, PrimeiroContato) != NULL) {    //achou o contato para exclusï¿½o
+            PrimeiroContato = (PrimeiroContato + sizeof(agenda)); //sobrepï¿½e o prï¿½ximo contato no contato excluï¿½do
+            return PrimeiroContato;   //excluï¿½do com sucesso
         }
         PrimeiroContato += sizeof(agenda);
         (*(QuantidadeDeContatos))--;
     }
-    return NULL; //contato não localizado para exclusão
+    return NULL; //contato nï¿½o localizado para exclusï¿½o
 }
 
 void Ordenar (void *Buffer, agenda *PosicaoPrimeiroContato, agenda *PosicaoUltimoContato, int *i, int *j, int *k, void *VetorTemp, int *qtdContatos) {
