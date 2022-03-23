@@ -1,24 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define NOMECONS 10
+#define TELCONS 8
 
-    int menu;
     int ndepessoas;
-    char nome[10];
-    char telefone[9];
-    int idade[3];
-    int *ptr;
-    int i, count;
+    char nome[NOMECONS];
+    char telefone[TELCONS];
+    int idade;
+    void *ptr;
+    int i, count;    
 
-    
+    void *adicionar(void *pBuffer);
+    void *listar(void *pBuffer);
+    void *remover(void *pBuffer);
+    void *buscar(void *pBuffer);
 
     int main(void){
-        ndepessoas = 0;
 
-        void *pBuffer = (unsigned char*)malloc(sizeof(nome)+sizeof(telefone)+sizeof(idade)+2);
 
-        do{
-            menu == 0;
+        int sair = 1, menu = 0;
+        void *pBuffer = calloc(1, sizeof(int));
+        *(int*)pBuffer = 0;
+
+        while(sair){
+
             printf("Digite 1 para inserir uma pessoa a agenda. \n");
             printf("Digite 2 para apagar uma pessoa a agenda. \n");
             printf("Digite 3 para buscar uma pessoa na agenda. \n");
@@ -30,56 +36,92 @@
             switch (menu){
 
             case 1:
-                ndepessoas = ndepessoas + 1;
-                pBuffer = &ndepessoas;
-                printf("Digite o nome que voce deseja inserir\n");
-                scanf("%s", nome);
-                printf("Digite a idade que voce deseja inserir(maximo de 3 digitos))\n");
-                scanf("%d", idade);
-                printf("Digite o numero de telefone que voce deseja inserir(maximo de 9 digitos)\n");
-                scanf("%d", telefone);
+                pBuffer = adicionar(pBuffer);
 
-                pBuffer = realloc(pBuffer,sizeof(nome)+sizeof(telefone)+sizeof(idade)+2);
-                
-                pBuffer =  &nome;
-
-
-                printf("%i\n", *((int*)pBuffer));
-                menu = 0;               
                 break;
             case 2:
-                ndepessoas = ndepessoas - 1;
+                pBuffer = remover(pBuffer);
 
                 break;
             case 3:
+                pBuffer = buscar(pBuffer);
 
-                printf("menu = %i \n", menu);
-                menu = 0;
-                printf("menu = %i \n", menu);
                 break;
             case 4:
-                count = sizeof(pBuffer);
-                printf("=========================AGENDA============================ \n");
-                for ( i = sizeof(pBuffer); i < count; i++)
-                {
-                
-                }
-                
+                pBuffer = listar(pBuffer);
 
-                printf("======================FIM DA AGENDA============================\n", menu);
-                menu = 0;
                 break;
             case 5:
             
-                printf("menu = %i \n", menu);
                 free(pBuffer);
+                return 0;
                 break;
             }
-         
-        } while (menu < 5);
-        
-        if(menu > 5){
-            printf("NUMERO INVALIDO");
         }
-        return(0);
     } 
+
+    void *adicionar(void *pBuffer){
+
+        ndepessoas = ndepessoas + 1;
+        int contatos;
+        ptr = pBuffer;
+
+        printf("Digite o nome que voce deseja inserir\n");
+        scanf("%s", nome);
+        printf("Digite a idade que voce deseja inserir\n");
+        scanf("%d", idade);
+        printf("Digite o numero de telefone que voce deseja inserir(maximo de 8 digitos)\n");
+        scanf("%s", telefone);
+        ndepessoas = *(int*)pBuffer;
+        contatos = contatos + (sizeof(nome) + sizeof(idade) + sizeof(telefone)+ 2);
+        pBuffer = realloc(pBuffer, contatos);
+        pBuffer = pBuffer + sizeof(int);
+        memmove((char*)pBuffer, nome, sizeof(nome));
+        pBuffer = pBuffer + sizeof(nome);
+        memmove((int*)pBuffer, idade, sizeof(idade));
+        pBuffer = pBuffer + sizeof(idade);
+        memmove((char*)pBuffer, telefone, sizeof(telefone));
+        pBuffer = pBuffer + sizeof(telefone);
+     
+        return ptr;
+    }
+    void *remover(void *pBuffer){
+        
+
+    }
+
+    void *listar(void *pBuffer){
+
+        void *ptr;
+        ptr = pBuffer;
+
+        printf("Numero de contatos = %d \n", ndepessoas);
+        for ( i = 1; i < ndepessoas; i++){
+            printf("Nome = %s\n", (char*)pBuffer);
+            pBuffer = pBuffer + NOMECONS;
+            printf("Idade =%d\n", idade);
+            pBuffer = pBuffer + sizeof(int);
+            printf("Telefone = %S\n", telefone);
+            pBuffer = pBuffer + TELCONS;
+            printf("\n");
+        
+        return ptr;
+        }   
+    }
+    void *buscar(void *pBuffer){ 
+        char nomebuscar;
+        void *ptr;
+        int contatos;
+
+        ptr = pBuffer;
+        printf("Digite o nome que deseja exluir");
+        scanf("%s", nomebuscar);
+        for ( i = 0; i < contatos; i++)
+        {
+            if(strcmp((char*)pBuffer,nomebuscar) != NULL){
+                printf("Esta presente na agenda");
+                pBuffer++;
+            }
+        }
+    return ptr;
+    }
