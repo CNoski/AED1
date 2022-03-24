@@ -7,7 +7,7 @@
     int ndepessoas;
     char nome[NOMECONS];
     char telefone[TELCONS];
-    int idade;
+    int idade[3];
     void *ptr;
     int i, count;    
 
@@ -40,7 +40,7 @@
 
                 break;
             case 2:
-                pBuffer = remover(pBuffer);
+                pBuffer = remover(pBuffer); 
 
                 break;
             case 3:
@@ -69,11 +69,10 @@
         printf("Digite o nome que voce deseja inserir\n");
         scanf("%s", nome);
         printf("Digite a idade que voce deseja inserir\n");
-        scanf("%d", idade);
+        scanf("%i", idade);
         printf("Digite o numero de telefone que voce deseja inserir(maximo de 8 digitos)\n");
         scanf("%s", telefone);
         ndepessoas = *(int*)pBuffer;
-        contatos = contatos + (sizeof(nome) + sizeof(idade) + sizeof(telefone)+ 2);
         pBuffer = realloc(pBuffer, contatos);
         pBuffer = pBuffer + sizeof(int);
         memmove((char*)pBuffer, nome, sizeof(nome));
@@ -96,12 +95,12 @@
         ptr = pBuffer;
 
         printf("Numero de contatos = %d \n", ndepessoas);
-        for ( i = 1; i < ndepessoas; i++){
-            printf("Nome = %s\n", (char*)pBuffer);
+        for (int i = 1; i <= ndepessoas; i++){
+            printf("Nome = %s\n", *(char*)pBuffer);
             pBuffer = pBuffer + NOMECONS;
-            printf("Idade =%d\n", idade);
+            printf("Idade =%d\n", *(int*)pBuffer);
             pBuffer = pBuffer + sizeof(int);
-            printf("Telefone = %S\n", telefone);
+            printf("Telefone = %S\n", *(char*)pBuffer);
             pBuffer = pBuffer + TELCONS;
             printf("\n");
         
@@ -114,7 +113,7 @@
         int contatos;
 
         ptr = pBuffer;
-        printf("Digite o nome que deseja exluir");
+        printf("Digite o nome que deseja buscar/");
         scanf("%s", nomebuscar);
         for ( i = 0; i < contatos; i++)
         {
