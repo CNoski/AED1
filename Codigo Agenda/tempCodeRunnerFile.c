@@ -1,1 +1,1 @@
-leitornodo
+    void *leitor = primeironodo;

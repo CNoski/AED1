@@ -1,0 +1,70 @@
+Dr. Memory version 2.5.0 build 0 built on Oct 18 2021 03:10:43
+Windows version: WinVer=105;Rel=2009;Build=19044;Edition=Enterprise
+Dr. Memory results for pid 1088: "CodigoAgenda.exe"
+Application cmdline: ""D:\Documents\Importantes\Aulas\Codigos\Codigo Agenda\CodigoAgenda.exe""
+Recorded 124 suppression(s) from default D:\LocalD\Drmemory\bin\suppress-default.txt
+
+Error #1: UNINITIALIZED READ: reading register eax
+# 0 KERNELBASE.dll!FindNextFileW      +0x20e    (0x76fd272e <KERNELBASE.dll+0x11272e>)
+# 1 KERNELBASE.dll!FindNextFileA      +0x33     (0x76fd5004 <KERNELBASE.dll+0x115004>)
+# 2 .text           
+# 3 __mingw_glob    
+# 4 _setargv        
+# 5 .text           
+# 6 ntdll.dll!__RtlUserThreadStart
+Note: @0:00:00.309 in thread 10988
+Note: instruction: cmp    %eax $0x0000001a
+
+Error #2: UNINITIALIZED READ: reading register eax
+# 0 KERNELBASE.dll!FindNextFileW      +0x23b    (0x76fd275b <KERNELBASE.dll+0x11275b>)
+# 1 KERNELBASE.dll!FindNextFileA      +0x33     (0x76fd5004 <KERNELBASE.dll+0x115004>)
+# 2 .text           
+# 3 __mingw_glob    
+# 4 _setargv        
+# 5 .text           
+# 6 ntdll.dll!__RtlUserThreadStart
+Note: @0:00:00.315 in thread 10988
+Note: instruction: data16 mov    %cx -> 0x00000234(%ebx,%eax,2)
+
+Error #3: UNINITIALIZED READ: reading register eax
+# 0 KERNELBASE.dll!FindNextFileW      +0x167    (0x76fd2687 <KERNELBASE.dll+0x112687>)
+# 1 KERNELBASE.dll!FindNextFileA      +0x33     (0x76fd5004 <KERNELBASE.dll+0x115004>)
+# 2 .text           
+# 3 __mingw_glob    
+# 4 _setargv        
+# 5 .text           
+# 6 ntdll.dll!__RtlUserThreadStart
+Note: @0:00:00.323 in thread 10988
+Note: instruction: test   %eax %eax
+
+Error #4: UNINITIALIZED READ: reading register eax
+# 0 main            
+Note: @0:00:00.375 in thread 10988
+Note: instruction: test   %eax %eax
+
+Error #5: LEAK 100 direct bytes 0x011f0f40-0x011f0fa4 + 0 indirect bytes
+# 0 replace_malloc               [d:\a\drmemory\drmemory\common\alloc_replace.c:2580]
+# 1 main            
+
+===========================================================================
+FINAL SUMMARY:
+
+DUPLICATE ERROR COUNTS:
+	Error #   1:      6
+	Error #   2:      6
+
+SUPPRESSIONS USED:
+
+ERRORS FOUND:
+      0 unique,     0 total unaddressable access(es)
+      4 unique,    14 total uninitialized access(es)
+      0 unique,     0 total invalid heap argument(s)
+      0 unique,     0 total GDI usage error(s)
+      0 unique,     0 total handle leak(s)
+      0 unique,     0 total warning(s)
+      1 unique,     1 total,    100 byte(s) of leak(s)
+      0 unique,     0 total,      0 byte(s) of possible leak(s)
+ERRORS IGNORED:
+      6 unique,     6 total,    430 byte(s) of still-reachable allocation(s)
+         (re-run with "-show_reachable" for details)
+Details: D:\LocalD\Drmemory\drmemory\logs\DrMemory-CodigoAgenda.exe.1088.000\results.txt
