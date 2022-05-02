@@ -15,24 +15,73 @@ typedef struct No{
     PonteiroNo pEsquerda, pDireita;
 }No;
 
+int Altura(No* pRaiz);
+int FB(No *pRaiz);
+void RotSimEsq(No **ppRaiz);
+void RotSimDir(No **ppRaiz);
+int BalancaDireita(No** ppRaiz);
+int BalancaDireita(No** ppRaiz);
+int Balancear(No** ppRaiz);
+void Limpar(No *pRaiz);
+int TesteArvoreAVL(No* pRaiz);
+
 int main(){
 
     No *Raiz = NULL;
 
-    srand(time(0));/* define a seed para o rand()*/
+    int menu;
+
+    do
+    {
+        printf("Digite 1 para o primeiro caso.\n");
+        printf("Digite 2 para o segundo caso.\n");
+        printf("Digite 3 para o sair.\n");
+
+        switch(menu){
+            case 1:
+                caso1(Raiz);
+                break;
+            case 2:
+                caso2(Raiz);
+                break;
+            case 3:
+                exit(1);
+                break;
+            default:
+                print("Opção invalida.");
+                break;
+        }
+    } while (menu != 3);
+    
 
     return 0;
 }
 
-void caso1(){
+void caso1(No *pRaiz){
 
-    PonteiroNo ppRaiz;
 
-    int ndenodos,aleatorio;
+    int ndenos, aleatorio, i;
+
+    srand(time(0));/* define a seed para o rand()*/
+
     printf("Insira o numero de nos que você deseja adicionar na arvores.\n");
-    scanf("%d", &ndenodos);
-    No novono;
-    aleatorio = rand();
+    scanf("%d", &ndenos);
+
+    for(i=0;i<ndenos;i++){
+        aleatorio = rand()%2001-1000;
+        inserir(&pRaiz,aleatorio);
+    }
+    /*Imprimir arvore*/
+
+
+    if(TesteArvoreAVL(pRaiz)){
+        printf("\nA arvore e AVL");
+    }
+    else{
+        printf("\nNao e AVL");
+    }
+
+    Limpar(pRaiz);
 }
 
 void caso2(){
@@ -41,7 +90,7 @@ void caso2(){
 
 int inserir(No **ppRaiz, int x){
     
-    if(*ppRaiz == NULL){
+    if(*ppRaiz == NULL){/*Caso a arvore esteja vazia*/
         
         *ppRaiz =(PonteiroNo)malloc(sizeof(No));
         (*ppRaiz)->reg.Dado = x;
@@ -49,7 +98,7 @@ int inserir(No **ppRaiz, int x){
         (*ppRaiz)->pEsquerda = NULL;
         return 1;
     }
-    else if( (*ppRaiz)->reg.Dado > x){
+    else if( (*ppRaiz)->reg.Dado > x){/*Caso o novo número seja menor que o nó anterior[insere na esquerda]*/
         if(inserir(&(*ppRaiz)->pEsquerda,x) ){
             if(Balancear(ppRaiz)){
                 return 0;
@@ -59,7 +108,7 @@ int inserir(No **ppRaiz, int x){
             }
         }
     }
-    else if((*ppRaiz)->reg.Dado < x){
+    else if((*ppRaiz)->reg.Dado < x){/*Caso o novo número seja maior que o nó anterior[insere na direita]*/
         if(inserir(&(*ppRaiz)->reg.Dado, x)){
             if(Balancear(ppRaiz)){
                 return 0;
@@ -163,4 +212,34 @@ int Balancear(No** ppRaiz){
     else{
         return 0;
     }
+}
+int TesteArvoreAVL(No* pRaiz){
+    int fb;
+
+    if(pRaiz == NULL){
+        return 1;
+    }
+    if(!TesteArvoreAVL(pRaiz->pEsquerda)){/*bate na folha e vai testando na volta*/
+        return 0;
+    }
+    if(!TesteArvoreAVL(pRaiz->pDireita)){/*bate na folha e vai testando na volta*/
+        return 0;
+    }
+    fb = FB(pRaiz);
+    if((fb > 1) || fb < -1){
+        return 0;/*retorna falha*/
+    }
+    else{
+        return 1;/*retorna sucesso*/
+    }
+}
+void Limpar(No *pRaiz){
+    if(pRaiz == NULL){
+        return;
+    }
+
+    Limpar(pRaiz->pEsquerda);
+    Limpar(pRaiz->pDireita);
+
+    free(pRaiz);
 }
