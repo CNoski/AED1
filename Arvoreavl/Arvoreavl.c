@@ -1,245 +1,468 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
 
+typedef struct Registro {
+    int dado;
+} Registro;
 
-typedef struct Registro{
-    int Dado;
-}Registro;
+typedef struct No {
+    Registro Reg;
+    struct No *pEsq, *pDir;
+} No;
 
-typedef struct No* PonteiroNo;
 
-typedef struct No{
-    Registro reg;
-    PonteiroNo pEsquerda, pDireita;
-}No;
-
+int FB (No* pRaiz);
 int Altura(No* pRaiz);
-int FB(No *pRaiz);
-void RotSimEsq(No **ppRaiz);
-void RotSimDir(No **ppRaiz);
-int BalancaDireita(No** ppRaiz);
+void RSE(No** ppRaiz);
+void RSD(No** ppRaiz);
+int BalancaEsquerda(No** ppRaiz);
 int BalancaDireita(No** ppRaiz);
 int Balancear(No** ppRaiz);
+int TesteArvoreArvl(No* pRaiz);
+int Inserir(No** ppRaiz,int x);
+void Listar(No *pRaiz);
 void Limpar(No *pRaiz);
-int TesteArvoreAVL(No* pRaiz);
+void Registrar(Registro *reg);
+int Remover(No** ppRaiz, int x);
+No* procuraMenor (No* pAtual);
+void Caso1(No *pRaiz);
+void Caso2();
 
 int main(){
+    No *pRaiz = NULL;
 
-    No *Raiz = NULL;
+    int op;
 
-    int menu;
+    do{
+        printf("Caso 1 digite 1\n");
+        printf("Caso 2 digite 2\n");
+        printf("Digite 3 para sair\n");
+        scanf("%d", &op);
 
-    do
-    {
-        printf("Digite 1 para o primeiro caso.\n");
-        printf("Digite 2 para o segundo caso.\n");
-        printf("Digite 3 para o sair.\n");
-
-        switch(menu){
+        switch(op){
             case 1:
-                caso1(Raiz);
+                Caso1(pRaiz);
                 break;
             case 2:
-                caso2(Raiz);
+                Caso2();
                 break;
             case 3:
                 exit(1);
                 break;
             default:
-                print("Opção invalida.");
+                printf("Opcao invalida\n");
                 break;
         }
-    } while (menu != 3);
-    
+    }while(op!=3);
 
-    return 0;
 }
 
-void caso1(No *pRaiz){
+void Caso1(No *pRaiz){
+    int numeroNos, random, i;
+    srand(time(0));
 
+    printf("Numero de nos que deseja ter na arvore? ");
+    scanf("%d", &numeroNos);
+    getchar();
 
-    int ndenos, aleatorio, i;
-
-    srand(time(0));/* define a seed para o rand()*/
-
-    printf("Insira o numero de nos que você deseja adicionar na arvores.\n");
-    scanf("%d", &ndenos);
-
-    for(i=0;i<ndenos;i++){
-        aleatorio = rand()%2001-1000;
-        inserir(&pRaiz,aleatorio);
+    for(i=0;i<numeroNos;i++){
+        random = rand()%1000;
+        Inserir(&pRaiz, random);
     }
-    /*Imprimir arvore*/
 
+    Listar(pRaiz);
+    printf("\n");
 
-    if(TesteArvoreAVL(pRaiz)){
-        printf("\nA arvore e AVL");
+    if(TesteArvoreArvl(pRaiz)) {
+        printf("\nA arvore e AVL\n");
     }
-    else{
-        printf("\nNao e AVL");
+    else {
+        printf("\nNao e AVL\n");
     }
 
     Limpar(pRaiz);
 }
 
-void caso2(){
-
+No* procuraMenor (No* pAtual) { 
+    No *no1 = pAtual;
+    No *no2 = pAtual->pEsq;
+    while (no2 != NULL) {
+        no1 = no2;
+        no2 = no2->pEsq;
+    }
+    return no1;
 }
 
-int inserir(No **ppRaiz, int x){
-    
-    if(*ppRaiz == NULL){/*Caso a arvore esteja vazia*/
-        
-        *ppRaiz =(PonteiroNo)malloc(sizeof(No));
-        (*ppRaiz)->reg.Dado = x;
-        (*ppRaiz)->pDireita = NULL;
-        (*ppRaiz)->pEsquerda = NULL;
-        return 1;
+int Remover(No** ppRaiz, int x){
+    if(*ppRaiz == NULL){
+        printf("O valor n existe\n");
+        return 0;
     }
-    else if( (*ppRaiz)->reg.Dado > x){/*Caso o novo número seja menor que o nó anterior[insere na esquerda]*/
-        if(inserir(&(*ppRaiz)->pEsquerda,x) ){
-            if(Balancear(ppRaiz)){
-                return 0;
-            }
-            else{
-                return 1;
-            }
+    int res; 
+    if(x < (*ppRaiz)->Reg.dado){
+        if((res=Remover(&(*ppRaiz)->pEsq, x)) == 1){
+            Balancear(ppRaiz);
         }
     }
-    else if((*ppRaiz)->reg.Dado < x){/*Caso o novo número seja maior que o nó anterior[insere na direita]*/
-        if(inserir(&(*ppRaiz)->reg.Dado, x)){
-            if(Balancear(ppRaiz)){
-                return 0;
-            }
-            else{
-                return 1;              
-            }
+
+    if(x > (*ppRaiz)->Reg.dado){
+        if((res=Remover(&(*ppRaiz)->pDir, x)) == 1){
+            Balancear(ppRaiz);
         }
+    }
+
+    if((*ppRaiz)->Reg.dado == x){
+        if((*ppRaiz)->pEsq == NULL || (*ppRaiz)->pDir == NULL){
+            No *removido = (*ppRaiz);
+            if((*ppRaiz)->pEsq != NULL){
+                (*ppRaiz) = (*ppRaiz)->pEsq;
+            }
+            else
+                (*ppRaiz) = (*ppRaiz)->pDir;
+            free(removido);
+        }
+        //tem dois filhos
         else{
-            return 0;
+            No *temporario = procuraMenor((*ppRaiz)->pDir);
+            (*ppRaiz)->Reg.dado = temporario->Reg.dado;
+            Remover(&(*ppRaiz)->pDir, (*ppRaiz)->Reg.dado);
+            Balancear(ppRaiz);
         }
-    }
-    else{
-        return 0;
-    }
-}
-
-
-
-int Altura(No* pRaiz){
-    int AlturaEsquerda, AlturaDireita;
-    if(pRaiz == NULL){
-        return 0;
-    }
-    AlturaEsquerda = Altura(pRaiz->pEsquerda);
-    AlturaDireita = Altura(pRaiz->pDireita);
-
-    if(AlturaEsquerda > AlturaDireita){
-        return AlturaEsquerda + 1;
-    }
-    else{
-        return AlturaDireita + 1;
-    }
-
-}
-
-int FB(No *pRaiz){
-    if(pRaiz == NULL){
-        return 0;
-    }
-    return Altura(pRaiz->pEsquerda) - Altura(pRaiz->pDireita);
-}
-
-int BalancaEsquerda(No** ppRaiz){
-
-    int fbEsq = FB((*ppRaiz)->pEsquerda);
-
-    if(fbEsq > 0){
-        /*rotação simples direita*/
-        RotSimDir(ppRaiz);
         return 1;
     }
-    else if(fbEsq < 0){
-        /*rotação dupla direita*/
-        RotSimEsq(&((*ppRaiz)->pEsquerda));
-        RotSimDir(ppRaiz);
-        return 1;
-    }
-    return 0;
+    return res;
 }
-int BalancaDireita(No** ppRaiz){
 
-    int fbDir = FB((*ppRaiz)->pDireita);
-
-    if(fbDir > 0){
-        /*rotação simples direita*/
-        RotSimEsq(ppRaiz);
-        return 1;
-    }
-    else if(fbDir < 0){
-        /*rotação dupla direita*/
-        RotSimDir(&((*ppRaiz)->pDireita));
-        RotSimEsq(ppRaiz);
-        return 1;
-    }
-    return 0;
-}
-void RotSimEsq(No **ppRaiz){
-    No *pAux;
-    pAux = (*ppRaiz)->pDireita;
-    (*ppRaiz)->pDireita = pAux->pEsquerda;
-    pAux->pEsquerda = (*ppRaiz);
-    (*ppRaiz) = pAux;
-}
-void RotSimDir(No **ppRaiz){
-    No *pAux;
-    pAux = (*ppRaiz)->pEsquerda;
-    (*ppRaiz)->pEsquerda = pAux->pDireita;
-    pAux->pEsquerda = (*ppRaiz);
-    (*ppRaiz) = pAux;
-}
-int Balancear(No** ppRaiz){
-    
-    int fb = FB(*ppRaiz);
-    if(fb > 1){
-        return BalancaEsquerda(ppRaiz);
-    }
-    else if(fb < -1){
-        return BalancaDireita(ppRaiz);
-    }
-    else{
-        return 0;
-    }
-}
-int TesteArvoreAVL(No* pRaiz){
-    int fb;
-
-    if(pRaiz == NULL){
-        return 1;
-    }
-    if(!TesteArvoreAVL(pRaiz->pEsquerda)){/*bate na folha e vai testando na volta*/
-        return 0;
-    }
-    if(!TesteArvoreAVL(pRaiz->pDireita)){/*bate na folha e vai testando na volta*/
-        return 0;
-    }
-    fb = FB(pRaiz);
-    if((fb > 1) || fb < -1){
-        return 0;/*retorna falha*/
-    }
-    else{
-        return 1;/*retorna sucesso*/
-    }
-}
 void Limpar(No *pRaiz){
-    if(pRaiz == NULL){
+    if (pRaiz == NULL) {
         return;
     }
 
-    Limpar(pRaiz->pEsquerda);
-    Limpar(pRaiz->pDireita);
+    Limpar(pRaiz->pEsq);
+    Limpar(pRaiz->pDir);
 
     free(pRaiz);
+}
+
+
+int Altura(No* pRaiz){
+    int iEsq,iDir;
+    if (pRaiz == NULL)
+        return 0;
+
+    iEsq = Altura(pRaiz->pEsq);
+    iDir = Altura(pRaiz->pDir);
+
+    if( iEsq > iDir )
+        return iEsq + 1;
+
+    else
+        return iDir + 1;
+}
+
+int FB (No* pRaiz){
+    if (pRaiz == NULL){
+        return 0;
+    }
+
+    return Altura(pRaiz->pEsq) - Altura(pRaiz->pDir);
+}
+
+void RSE(No** ppRaiz){
+    No *pAux;
+    pAux = (*ppRaiz)->pDir;
+    (*ppRaiz)->pDir = pAux->pEsq;
+    pAux->pEsq = (*ppRaiz);
+    (*ppRaiz) = pAux;
+}
+
+void RSD(No** ppRaiz){
+    No *pAux;
+    pAux = (*ppRaiz)->pEsq;
+    (*ppRaiz)->pEsq = pAux->pDir;
+    pAux->pDir = (*ppRaiz);
+    (*ppRaiz) = pAux;
+}
+
+int BalancaEsquerda(No** ppRaiz){
+    int fbe = FB ( (*ppRaiz)->pEsq );
+
+    if( fbe >= 0 ){
+        RSD(ppRaiz);
+        return 1;
+    }
+
+    else if (fbe < 0 ){ 
+        RSE( &((*ppRaiz)->pEsq) );
+        RSD( ppRaiz ); 
+        return 1;
+    }
+
+    return 0;
+}
+
+int BalancaDireita(No** ppRaiz){
+    int fbd = FB( (*ppRaiz)->pDir);
+
+    if( fbd <= 0 ){
+        RSE (ppRaiz);
+        return 1;
+    }
+
+    else if (fbd > 0 ){ 
+
+        RSD( &((*ppRaiz)->pDir) );
+        RSE( ppRaiz );
+        return 1;
+    }
+    return 0;
+}
+
+int Balancear(No** ppRaiz){
+    int fb = FB(*ppRaiz);
+    if( fb > 1)
+        return BalancaEsquerda(ppRaiz);
+
+    else if(fb < -1 )
+        return BalancaDireita(ppRaiz);
+
+    else
+        return 0;
+}
+
+int Inserir(No** ppRaiz,int x){
+    if (*ppRaiz == NULL){
+        *ppRaiz = (No*)malloc(sizeof(No));
+        (*ppRaiz)->Reg.dado = x;
+        (*ppRaiz)->pEsq = NULL;
+        (*ppRaiz)->pDir = NULL;
+        return 1;
+    }
+
+    else if ( (*ppRaiz)->Reg.dado > x){
+        if ( Inserir(&(*ppRaiz)->pEsq,x) ){
+            if (Balancear(ppRaiz))
+                return 0;
+            else
+                return 1;
+        }
+    }
+
+    else if ( (*ppRaiz)->Reg.dado < x ){
+        if ( Inserir(&(*ppRaiz)->pDir,x) ){
+            if (Balancear(ppRaiz))
+                return 0;
+            else
+                return 1;
+        }
+        else
+            return 0;
+    }
+
+    else{
+        return 0; /* valor já presente */
+    }
+    return 0;
+}
+
+int TesteArvoreArvl(No* pRaiz){
+    int fb;
+    if (pRaiz == NULL)
+        return 1;
+
+    if (!TesteArvoreArvl(pRaiz->pEsq))
+        return 0;
+
+    if (!TesteArvoreArvl(pRaiz->pDir))
+        return 0;
+
+    fb = FB (pRaiz);
+    if ( ( fb > 1 ) || ( fb < -1) )
+        return 0;
+
+    else
+        return 1;
+}
+
+void Listar (No *pRaiz){
+
+    if (pRaiz != NULL) {
+        printf("%d(", pRaiz->Reg.dado);
+        Listar(pRaiz->pEsq);
+        Listar(pRaiz->pDir);
+        printf(")");
+    }
+
+}
+
+void Caso2(){
+    No *pRaiz = NULL;
+
+    printf("Caso 1a: Inserir 15\n");
+    Inserir(&pRaiz, 20);
+    Inserir(&pRaiz, 4);
+    printf("Arvore antes do 15\n");
+    Listar(pRaiz);
+    printf("\n");
+    Inserir(&pRaiz, 15);
+    printf("Arvore depois do 15\n");
+    Listar(pRaiz);
+    printf("\n\n");
+    Limpar(pRaiz);
+    pRaiz = NULL;
+
+    printf("Caso 2a: Inserir 15\n");
+    Inserir(&pRaiz, 20);
+    Inserir(&pRaiz, 4);
+    Inserir(&pRaiz, 26);
+    Inserir(&pRaiz, 9);
+    Inserir(&pRaiz, 3);
+    printf("Arvore antes do 15\n");
+    Listar(pRaiz);
+    printf("\n");
+    Inserir(&pRaiz, 15);
+    printf("Arvore depois do 15\n");
+    Listar(pRaiz);
+    printf("\n\n");
+    Limpar(pRaiz);
+    pRaiz = NULL;
+
+    printf("Caso 3a: Inserir 15\n");
+    Inserir(&pRaiz, 20);
+    Inserir(&pRaiz, 4);
+    Inserir(&pRaiz, 26);
+    Inserir(&pRaiz, 3);
+    Inserir(&pRaiz, 9);
+    Inserir(&pRaiz, 21);
+    Inserir(&pRaiz, 30);
+    Inserir(&pRaiz, 2);
+    Inserir(&pRaiz, 7);
+    Inserir(&pRaiz, 11);
+    printf("Arvore antes do 15\n");
+    Listar(pRaiz);
+    printf("\n");
+    Inserir(&pRaiz, 15);
+    printf("Arvore depois do 15\n");
+    Listar(pRaiz);
+    printf("\n\n");
+    Limpar(pRaiz);
+    pRaiz = NULL;
+
+    printf("Caso 1b: Inserir 8\n");
+    Inserir(&pRaiz, 20);
+    Inserir(&pRaiz, 4);
+    printf("Arvore antes do 8\n");
+    Listar(pRaiz);
+    printf("\n");
+    Inserir(&pRaiz, 8);
+    printf("Arvore depois do 8\n");
+    Listar(pRaiz);
+    printf("\n\n");
+    Limpar(pRaiz);
+    pRaiz = NULL;
+
+    printf("Caso 2b: Inserir 8\n");
+    Inserir(&pRaiz, 20);
+    Inserir(&pRaiz, 4);
+    Inserir(&pRaiz, 26);
+    Inserir(&pRaiz, 9);
+    Inserir(&pRaiz, 3);
+    printf("Arvore antes do 8\n");
+    Listar(pRaiz);
+    printf("\n");
+    Inserir(&pRaiz, 8);
+    printf("Arvore depois do 8\n");
+    Listar(pRaiz);
+    printf("\n\n");
+    Limpar(pRaiz);
+    pRaiz = NULL;
+
+    printf("Caso 3b: Inserir 8\n");
+    Inserir(&pRaiz, 20);
+    Inserir(&pRaiz, 4);
+    Inserir(&pRaiz, 26);
+    Inserir(&pRaiz, 3);
+    Inserir(&pRaiz, 9);
+    Inserir(&pRaiz, 21);
+    Inserir(&pRaiz, 30);
+    Inserir(&pRaiz, 2);
+    Inserir(&pRaiz, 7);
+    Inserir(&pRaiz, 11);
+    printf("Arvore antes do 8\n");
+    Listar(pRaiz);
+    printf("\n");
+    Inserir(&pRaiz, 8);
+    printf("Arvore depois do 8\n");
+    Listar(pRaiz);
+    printf("\n\n");
+    Limpar(pRaiz);
+    pRaiz = NULL;
+
+    printf("Caso 1: Deletar\n");
+    Inserir(&pRaiz, 2);
+    Inserir(&pRaiz, 1);
+    Inserir(&pRaiz, 4);
+    Inserir(&pRaiz, 3);
+    Inserir(&pRaiz, 5);
+    printf("Arvore antes de deletar o 1\n");
+    Listar(pRaiz);
+    printf("\n");
+    //Removendo o 1
+    Remover(&pRaiz, 1);
+    printf("Arvore depois de deletar o 1\n");
+    Listar(pRaiz);
+    printf("\n\n");
+    Limpar(pRaiz);
+    pRaiz = NULL;
+
+    printf("Case 2: Delete\n");
+    Inserir(&pRaiz, 6);
+    Inserir(&pRaiz, 2);
+    Inserir(&pRaiz, 9);
+    Inserir(&pRaiz, 1);
+    Inserir(&pRaiz, 4);
+    Inserir(&pRaiz, 8);
+    Inserir(&pRaiz, 66);
+    Inserir(&pRaiz, 3);
+    Inserir(&pRaiz, 5);
+    Inserir(&pRaiz, 7);
+    Inserir(&pRaiz, 65);
+    Inserir(&pRaiz, 67);
+    Inserir(&pRaiz, 68);
+    printf("Arvore antes de deletar o 1\n");
+    Listar(pRaiz);
+    printf("\n");
+    //Removendo o 1
+    Remover(&pRaiz, 1);
+    printf("Arvore depois de deletar o 1\n");
+    Listar(pRaiz);
+    printf("\n\n");
+    Limpar(pRaiz);
+    pRaiz = NULL;
+
+    
+    printf("Case 3: Delete\n");
+    Inserir(&pRaiz, 5);
+    Inserir(&pRaiz, 2);
+    Inserir(&pRaiz, 8);
+    Inserir(&pRaiz, 1);
+    Inserir(&pRaiz, 3);
+    Inserir(&pRaiz, 7);
+    Inserir(&pRaiz, 65); //A
+    Inserir(&pRaiz, 4);
+    Inserir(&pRaiz, 6);
+    Inserir(&pRaiz, 9);
+    Inserir(&pRaiz, 66);//B
+    Inserir(&pRaiz, 67);//C
+    printf("Arvore antes de deletar o 1\n");
+    Listar(pRaiz);
+    printf("\n");
+    //Removendo o 1
+    Remover(&pRaiz, 1);
+    printf("Arvore depois de deletar o 1\n");
+    Listar(pRaiz);
+    printf("\n\n");
+    Limpar(pRaiz);
+    pRaiz = NULL;
 }
