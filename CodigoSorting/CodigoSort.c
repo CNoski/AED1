@@ -13,6 +13,7 @@ int Separar(int VetorQuick[], int esq, int dir);
 int Separar_r(int VetorQuick[], int esq, int dir);
 int QuickSort(int VetorQuick, int esq, int dir);
 float tempodif(struct timeval *start, struct timeval *end);
+int Testedeordenacao(int vetor[], int tamanho);
 
 
 int main()
@@ -24,7 +25,7 @@ int main()
     int vetor[n];
 
     for ( i = 0; i < n; i++)
-        vetor[i] = rand()%1000;
+        vetor[i] = rand()%10000;
 
 
     float tempoinsertion = InsertionSort(vetor, n);
@@ -32,22 +33,21 @@ int main()
     float tempomerge = MergeSort(vetor, n);
     float tempoquick = QuickSortmain(vetor, 0, n);
 
-    printf("Tempo Insertion = %.8f.\n", tempoinsertion);
-    printf("Tempo Selection = %.8f.\n", temposelection);
-    printf("Tempo Merge = %.8f.\n", tempomerge);
-    printf("Tempo Quick = %.8f.\n", tempoquick);
+    printf("Tempo Insertion = %.8f segundos.\n", tempoinsertion);
+    printf("Tempo Selection = %.8f segundos.\n", temposelection);
+    printf("Tempo Merge = %.8f. segundos\n", tempomerge);
+    printf("Tempo Quick = %.8f. segundos\n", tempoquick);
     return 0;
 }
 //================INSERTIONSORT====================
 float InsertionSort(int *pvetor, int n)
 {
-    printf("==========Insertion Sort==========\n\n");
+    printf("==========Insertion Sort==========\n");
     int VetorInsert[n], i, chave, j;
-    printf("Vetor desorganizado\n\n");
+
     for ( i= 0; i < n; i++)
     {
         VetorInsert[i] = pvetor[i];
-        printf("<Vetor[%d] = %d>\n", i, VetorInsert[i]);
     }
 
     struct timeval comeco, fim;
@@ -67,22 +67,19 @@ float InsertionSort(int *pvetor, int n)
     }
     gettimeofday(&fim, NULL);/*fim da contagem*/
 
-    printf("Vetor Organizado\n\n");
-    for ( i = 0; i < n; i++)
-        printf("<Vetor[%d] = %d>\n", i, VetorInsert[i]);
+    Testedeordenacao(VetorInsert, n);
 
     return tempodif(&comeco, &fim);
 }
 //================SELECTIONSORT====================
 float SelectionSort(int *pvetor, int n)
 {
-    printf("==========Selection Sort==========\n\n");
+    printf("==========Selection Sort==========\n");
     int VetorSelection[n], i;
-    printf("Vetor desorganizado\n\n");
+
     for ( i= 0; i < n; i++)
     {
         VetorSelection[i] = pvetor[i];
-        printf("<Vetor[%d] = %d>\n", i, VetorSelection[i]);
     }
 
     struct timeval comeco, fim;
@@ -90,7 +87,6 @@ float SelectionSort(int *pvetor, int n)
     int VAux, VMenor, VTemp, VTroca;
 
     gettimeofday(&comeco, NULL);/*começo da contagem*/
-
     for ( VAux = 0; VAux < n-1; VAux++)//ele vai até o n-1 porque o ultimo numero sempre sera o maior
     {
         VMenor = VAux;
@@ -106,25 +102,21 @@ float SelectionSort(int *pvetor, int n)
         VetorSelection[VMenor] = VTroca;
         } 
     }
-
     gettimeofday(&fim, NULL);/*fim da contagem*/
 
-    printf("Vetor Organizado\n\n");
-    for ( i = 0; i < n; i++)
-    printf("<Vetor[%d] = %d>\n", i, VetorSelection[i]);
-    
+    Testedeordenacao(VetorSelection, n);
+
     return tempodif(&comeco, &fim);
 }
 //================MERGESORT====================
 float MergeSort(int *pvetor, int n){
-    printf("==========Merge Sort==========\n\n");
+    printf("==========Merge Sort==========\n");
 
     int VetorMerge[n], i;
-    printf("Vetor desorganizado\n\n");
+
     for ( i= 0; i < n; i++)
     {
         VetorMerge[i] = pvetor[i];
-        printf("<Vetor[%d] = %d>\n", i, VetorMerge[i]);
     }
 
     struct timeval comeco, fim;
@@ -132,10 +124,7 @@ float MergeSort(int *pvetor, int n){
     Dividir(VetorMerge, 0, n);
     gettimeofday(&fim, NULL);/*fim da contagem*/
 
-    printf("Vetor organizado\n\n");
-
-    for ( i= 0; i < n; i++)
-        printf("<Vetor[%d] = %d>\n", i, VetorMerge[i]);
+    Testedeordenacao(VetorMerge, n);
 
     return tempodif(&comeco, &fim);
 }
@@ -196,23 +185,19 @@ void Conquistar(int VetorMerge[], int esq, int meio, int dir)
 //================QUICKSORT=====================
 float QuickSortmain(int *pvetor, int esq, int n)
 {  
-    printf("==========Quick Sort==========\n\n");
+    printf("==========Quick Sort==========\n");
     int VetorQuick[n], i;
-    printf("Vetor desorganizado\n\n");
+
     for ( i= 0; i < n; i++)
     {
         VetorQuick[i] = pvetor[i];
-        printf("<Vetor[%d] = %d>\n", i, VetorQuick[i]);
     }
     struct timeval comeco, fim;
     gettimeofday(&comeco, NULL);/*começo da contagem*/
     QuickSort(VetorQuick, 0, n);
     gettimeofday(&fim, NULL);/*fim da contagem*/
 
-
-    printf("Vetor organizado\n\n");
-    for ( i= 0; i < n; i++)
-        printf("<Vetor[%d] = %d>\n", i, VetorQuick[i]);
+    Testedeordenacao(VetorQuick, n);
 
     return tempodif(&comeco, &fim);
 }
@@ -264,3 +249,13 @@ float tempodif(struct timeval *comeco, struct timeval *fim)
 {
     return (fim->tv_sec - comeco->tv_sec) + 1e-6*(fim->tv_usec - comeco->tv_usec);
 }
+int Testedeordenacao(int vetor[], int tamanho) {
+    for (int i = 1; i < tamanho; i++) {
+        if (vetor[i - 1] > vetor[i]) {
+            printf("deu ruim \n");
+            return 0;
+        }
+    }
+    printf("deu bom \n");
+    return 1; 
+ }
